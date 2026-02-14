@@ -4,164 +4,81 @@
 <meta charset="UTF-8">
 <title>ireminyemekleri</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#fff7f0;
-}
-header{
-  background:#e63946;
-  color:#fff;
-  padding:15px;
-  text-align:center;
-}
-#recipes{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:20px;
-  padding:20px;
-}
-.card{
-  background:#fff;
-  border-radius:10px;
-  padding:15px;
-  box-shadow:0 4px 8px rgba(0,0,0,.1);
-}
-iframe{
-  width:100%;
-  height:220px;
-  border-radius:8px;
-}
-input, textarea, select, button{
-  width:100%;
-  padding:8px;
-  margin-top:8px;
-}
-button{
-  background:#e63946;
-  color:white;
-  border:none;
-  cursor:pointer;
-}
-.comment{
-  background:#f1f1f1;
-  padding:8px;
-  border-radius:6px;
-  margin-top:5px;
-  font-size:14px;
-}
-.rating{
-  font-weight:bold;
-  margin-top:5px;
-}
+body{margin:0;font-family:Arial;background:#fff7f0;}
+header{background:#e63946;color:#fff;padding:15px;text-align:center;}
+#recipes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;padding:20px;}
+.card{background:#fff;border-radius:10px;padding:15px;box-shadow:0 4px 8px rgba(0,0,0,.1);}
+iframe{width:100%;height:220px;border-radius:8px;}
+.comment{background:#f1f1f1;padding:6px;border-radius:6px;margin-top:5px;font-size:14px;}
+.rating{font-weight:bold;margin-top:5px;}
+input,select,button{width:100%;padding:8px;margin-top:6px;}
+button{background:#e63946;color:white;border:none;cursor:pointer;}
 </style>
 </head>
-
 <body>
 
 <header>
-  <h1>🍲 ireminyemekleri</h1>
+<h1>🍲 ireminyemekleri</h1>
 </header>
-
-<div style="padding:20px;">
-  <h3>Yeni Tarif Ekle</h3>
-  <input id="title" placeholder="Tarif Başlığı">
-  <input id="video" placeholder="YouTube veya Instagram Video Linki">
-  <textarea id="desc" placeholder="Tarif Açıklaması"></textarea>
-  <button onclick="addRecipe()">Tarif Ekle</button>
-</div>
 
 <main id="recipes"></main>
 
 <script>
-let recipes = JSON.parse(localStorage.getItem("recipes")) || [];
+let recipes = JSON.parse(localStorage.getItem("recipes")) || [
+{
+title:"Islak Kek",
+video:"https://www.youtube.com/embed/Zx0WQ7uRz1M",
+desc:"Tam kıvamında ıslak kek tarifi.",
+comments:[],
+ratings:[9,10]
+}
+];
 
 function save(){
-  localStorage.setItem("recipes", JSON.stringify(recipes));
+localStorage.setItem("recipes", JSON.stringify(recipes));
 }
 
-function convertVideo(link){
-  if(link.includes("youtube.com/watch")){
-    let id = link.split("v=")[1].split("&")[0];
-    return "https://www.youtube.com/embed/" + id;
-  }
-  if(link.includes("youtu.be")){
-    let id = link.split("/").pop();
-    return "https://www.youtube.com/embed/" + id;
-  }
-  if(link.includes("instagram.com")){
-    return link + "embed";
-  }
-  return link;
+function addComment(i){
+let text=document.getElementById("c"+i).value;
+let rate=document.getElementById("r"+i).value;
+if(!text||!rate){alert("Yorum ve puan gir");return;}
+recipes[i].comments.push(text);
+recipes[i].ratings.push(parseInt(rate));
+save();
+load();
 }
 
-function addRecipe(){
-  let title = document.getElementById("title").value;
-  let video = convertVideo(document.getElementById("video").value);
-  let desc = document.getElementById("desc").value;
-
-  if(!title || !video){ alert("Başlık ve video gerekli"); return;}
-
-  recipes.push({
-    title,
-    video,
-    desc,
-    comments: [],
-    ratings: []
-  });
-
-  save();
-  loadRecipes();
+function avg(arr){
+if(arr.length==0)return "Henüz puan yok";
+return (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
 }
 
-function addComment(index){
-  let text = document.getElementById("comment"+index).value;
-  let rate = document.getElementById("rate"+index).value;
+function load(){
+let area=document.getElementById("recipes");
+area.innerHTML="";
+recipes.forEach((r,i)=>{
+area.innerHTML+=`
+<div class="card">
+<h3>${r.title}</h3>
+<iframe src="${r.video}" allowfullscreen></iframe>
+<p>${r.desc}</p>
+<div class="rating">Ortalama: ${avg(r.ratings)} /10</div>
 
-  if(!text || !rate){ alert("Yorum ve puan gir"); return;}
+<h4>Yorum Yap</h4>
+<input id="c${i}" placeholder="Yorumun">
+<select id="r${i}">
+<option value="">Puan</option>
+${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option>${n}</option>`)}
+</select>
+<button onclick="addComment(${i})">Gönder</button>
 
-  recipes[index].comments.push(text);
-  recipes[index].ratings.push(parseInt(rate));
-
-  save();
-  loadRecipes();
+<h4>Yorumlar</h4>
+${r.comments.map(c=>`<div class="comment">${c}</div>`).join("")}
+</div>`;
+});
 }
-
-function average(arr){
-  if(arr.length==0) return "Henüz puan yok";
-  return (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
-}
-
-function loadRecipes(){
-  let area = document.getElementById("recipes");
-  area.innerHTML="";
-
-  recipes.forEach((r,index)=>{
-    area.innerHTML += `
-    <div class="card">
-      <h3>${r.title}</h3>
-      <iframe src="${r.video}" allowfullscreen></iframe>
-      <p>${r.desc}</p>
-
-      <div class="rating">Ortalama Puan: ${average(r.ratings)} / 10</div>
-
-      <h4>Yorum Yap</h4>
-      <input id="comment${index}" placeholder="Yorumun">
-      <select id="rate${index}">
-        <option value="">Puan Seç</option>
-        ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option>${n}</option>`).join("")}
-      </select>
-      <button onclick="addComment(${index})">Gönder</button>
-
-      <h4>Yorumlar</h4>
-      ${r.comments.map(c=>`<div class="comment">${c}</div>`).join("")}
-    </div>`;
-  });
-}
-
-loadRecipes();
+load();
 </script>
 
 </body>
