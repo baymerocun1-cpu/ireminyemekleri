@@ -25,59 +25,74 @@ button{background:#e63946;color:white;border:none;cursor:pointer;}
 <main id="recipes"></main>
 
 <script>
-let recipes = JSON.parse(localStorage.getItem("recipes")) || [
-{
-title:"Islak Kek",
-video:"https://www.youtube.com/embed/Zx0WQ7uRz1M",
-desc:"Tam kıvamında ıslak kek tarifi.",
-comments:[],
-ratings:[9,10]
-}
+let recipes = [
+  {
+    title:"Sarımsaklı Tavuklu Pilav",
+    video:"https://www.youtube.com/embed/HtjtwrkIEDI",
+    desc:"Mis gibi sarımsaklı tavuklu pilav sevenler youtubede tarifi var",
+    comments:[],
+    ratings:[]
+  },
+  {
+    title:"İçli Köfte",
+    video:"https://www.youtube.com/embed/OPuZUCBzC_4",
+    desc:"Mis gibi bayılacaksınız içli köftenin tarifi youtubede",
+    comments:[],
+    ratings:[]
+  },
+  {
+    title:"Ispanaklı Poğaça",
+    video:"https://www.youtube.com/embed/eiYPzb_XMw0",
+    desc:"Çok güzel yeşil renkli poğaça doy doy ye tarifi youtubede",
+    comments:[],
+    ratings:[]
+  }
 ];
 
 function save(){
-localStorage.setItem("recipes", JSON.stringify(recipes));
+  localStorage.setItem("recipes", JSON.stringify(recipes));
 }
 
 function addComment(i){
-let text=document.getElementById("c"+i).value;
-let rate=document.getElementById("r"+i).value;
-if(!text||!rate){alert("Yorum ve puan gir");return;}
-recipes[i].comments.push(text);
-recipes[i].ratings.push(parseInt(rate));
-save();
-load();
+  let text=document.getElementById("c"+i).value;
+  let rate=document.getElementById("r"+i).value;
+  if(!text||!rate){alert("Yorum ve puan gir");return;}
+  recipes[i].comments.push(text);
+  recipes[i].ratings.push(parseInt(rate));
+  save();
+  load();
 }
 
 function avg(arr){
-if(arr.length==0)return "Henüz puan yok";
-return (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
+  if(arr.length==0)return "Henüz puan yok";
+  return (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
 }
 
 function load(){
-let area=document.getElementById("recipes");
-area.innerHTML="";
-recipes.forEach((r,i)=>{
-area.innerHTML+=`
-<div class="card">
-<h3>${r.title}</h3>
-<iframe src="${r.video}" allowfullscreen></iframe>
-<p>${r.desc}</p>
-<div class="rating">Ortalama: ${avg(r.ratings)} /10</div>
+  let area=document.getElementById("recipes");
+  area.innerHTML="";
+  recipes.forEach((r,i)=>{
+    area.innerHTML+=`
+    <div class="card">
+      <h3>${r.title}</h3>
+      <iframe src="${r.video}" allowfullscreen></iframe>
+      <p>${r.desc}</p>
+      <div class="rating">Ortalama: ${avg(r.ratings)} /10</div>
 
-<h4>Yorum Yap</h4>
-<input id="c${i}" placeholder="Yorumun">
-<select id="r${i}">
-<option value="">Puan</option>
-${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option>${n}</option>`)}
-</select>
-<button onclick="addComment(${i})">Gönder</button>
+      <h4>Yorum Yap</h4>
+      <input id="c${i}" placeholder="Yorumun">
+      <select id="r${i}">
+        <option value="">Puan</option>
+        ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option>${n}</option>`)}
+      </select>
+      <button onclick="addComment(${i})">Gönder</button>
 
-<h4>Yorumlar</h4>
-${r.comments.map(c=>`<div class="comment">${c}</div>`).join("")}
-</div>`;
-});
+      <h4>Yorumlar</h4>
+      ${r.comments.map(c=>`<div class="comment">${c}</div>`).join("")}
+    </div>`;
+  });
 }
+
 load();
 </script>
 
