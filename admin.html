@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<style>
+body{font-family:Arial;background:#fff7f0;padding:20px;}
+input,textarea,button{width:100%;padding:8px;margin-top:10px;}
+button{background:#e63946;color:white;border:none;}
+</style>
+</head>
+<body>
+
+<h2>🔒 Admin Panel</h2>
+
+<input id="pass" type="password" placeholder="Şifre">
+<button onclick="login()">Giriş</button>
+
+<div id="panel" style="display:none;">
+<h3>Yeni Tarif</h3>
+<input id="title" placeholder="Başlık">
+<input id="video" placeholder="YouTube embed linki">
+<textarea id="desc" placeholder="Açıklama"></textarea>
+<button onclick="add()">Tarif Ekle</button>
+</div>
+
+<script>
+let PASSWORD="1234";
+
+function login(){
+if(document.getElementById("pass").value===PASSWORD){
+document.getElementById("panel").style.display="block";
+}else{
+alert("Yanlış şifre");
+}
+}
+
+function add(){
+let recipes=JSON.parse(localStorage.getItem("recipes"))||[];
+recipes.push({
+title:document.getElementById("title").value,
+video:document.getElementById("video").value,
+desc:document.getElementById("desc").value,
+comments:[],
+ratings:[]
+});
+localStorage.setItem("recipes",JSON.stringify(recipes));
+alert("Eklendi!");
+}
+</script>
+
+</body>
+</html>
