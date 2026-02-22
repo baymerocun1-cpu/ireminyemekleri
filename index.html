@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>ireminyemekleri</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FW4MBNYHSN"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -12,7 +13,7 @@
   gtag('config', 'G-D5Y215RMN1');
 </script>
 
-  <style>
+<style>
 body{margin:0;font-family:Arial;background:#fff7f0;}
 header{background:#e63946;color:#fff;padding:15px;text-align:center;}
 #recipes{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;padding:20px;}
@@ -54,6 +55,20 @@ let recipes = [
     desc:"Çok güzel yeşil renkli poğaça doy doy ye tarifi youtubede",
     comments:[],
     ratings:[]
+  },
+  {
+    title:"Sucuklu Milföy Katmer",
+    video:"https://www.youtube.com/embed/9nHbrmuCcCs",
+    desc:"Tarifi youtubeda çok seviceksiniz",
+    comments:[],
+    ratings:[]
+  },
+  {
+    title:"Tavuk Yemeği",
+    video:"https://www.youtube.com/embed/C1EQUx4bu48",
+    desc:"Tarifi Youtubeda Tadına Bayılıcaksınızz",
+    comments:[],
+    ratings:[]
   }
 ];
 
@@ -77,6 +92,9 @@ function avg(arr){
 }
 
 function load(){
+  let saved = localStorage.getItem("recipes");
+  if(saved){ recipes = JSON.parse(saved); }
+
   let area=document.getElementById("recipes");
   area.innerHTML="";
   recipes.forEach((r,i)=>{
@@ -86,7 +104,6 @@ function load(){
       <iframe src="${r.video}" allowfullscreen></iframe>
       <p>${r.desc}</p>
       <div class="rating">Ortalama: ${avg(r.ratings)} /10</div>
-
       <h4>Yorum Yap</h4>
       <input id="c${i}" placeholder="Yorumun">
       <select id="r${i}">
@@ -94,7 +111,6 @@ function load(){
         ${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option>${n}</option>`)}
       </select>
       <button onclick="addComment(${i})">Gönder</button>
-
       <h4>Yorumlar</h4>
       ${r.comments.map(c=>`<div class="comment">${c}</div>`).join("")}
     </div>`;
